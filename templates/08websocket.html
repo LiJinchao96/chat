@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title> WebSocket </title>
+     <link href="https://cdn.bootcss.com/bootstrap/3.3.7/css/bootstrap.css" rel="stylesheet">
+    <style>
+        *{
+            margin: 0;
+            padding: 0;
+        }
+        .box{
+            width: 800px;
+            margin-left: auto;
+            margin-right: auto;
+            margin-top: 25px;
+        }
+        #text{
+            width: 685px;
+            height: 130px;
+            border: 1px solid skyblue;
+            border-radius: 10px;
+            font-size: 20px;
+            text-indent: 1em;
+            resize:none;
+            outline: none;
+        }
+        #text::placeholder{
+            color: skyblue;
+        }
+        .btn{
+            width: 100px;
+            margin: -27px 0 0px 8px;
+        }
+        #messages{
+            padding-left: 10px;
+            font-size: 25px;
+        }
+        #messages li{
+            list-style: none;
+            color: #000;
+            line-height: 30px;
+            font-size: 18px;
+
+        }
+    </style>
+</head>
+<body>
+    <div class="box">
+        <div>
+            <textarea id="text" placeholder="请输入您的内容"></textarea>
+            <a href="javascript:WebSocketSend();" class="btn btn-primary">发送</a>
+        </div>
+        <ul id="messages">
+        </ul>
+    </div>
+
+
+    <script src="{{ static_url('js/jquery-2.2.0.min.js') }}"></script>
+
+
+    <script type="text/javascript">
+
+        var mes = document.getElementById('messages');
+        if("WebSocket" in window){
+            mes.innerHTML = "发送WebSocket请求成功！";
+            var ws = new WebSocket("ws://192.168.1.110:8888/websocket");
+            ws.onopen = function () {
+            alert('连接已打开请聊天')
+        };
+        ws.onmessage = function (goudan) {
+
+            var received_msg = goudan.data;
+
+            var aLi = $("<li>"+received_msg+"</li>");
+            $(mes).append($(aLi)) //  方法一
+//            $(aLi).appendTo(mes); //  方法二
+        };
+        ws.onclose = function () {
+            mes.innerHTML = mes.innerHTML + "<br>连接已经关闭...";
+        };
+        } else {
+            mes.innerHTML = "发送WebSocket请求失败！"
+        }
+        function WebSocketSend() {
+            ws.send($("#text").val());
+        }
+    </script>
+
+</body>
+</html>
